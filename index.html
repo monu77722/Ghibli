@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Converter</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .image-box {
+            flex: 1;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        img {
+            max-width: 100%;
+            max-height: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #loading {
+            display: none;
+            margin: 10px 0;
+        }
+        #error {
+            color: red;
+            display: none;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Converter</h1>
+        
+        <div>
+            <input type="file" id="imageInput" accept="image/*">
+            <select id="styleSelect">
+                <option value="ghibli">Ghibli Style</option>
+                <option value="anime">Anime Style</option>
+            </select>
+            <button onclick="convertImage()">Convert</button>
+        </div>
+        
+        <div id="loading">Converting...</div>
+        <div id="error"></div>
+        
+        <div class="image-container">
+            <div class="image-box">
+                <h3>Original</h3>
+                <img id="originalImage">
+            </div>
+            <div class="image-box">
+                <h3>Converted</h3>
+                <img id="convertedImage">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function convertImage() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showError('Please select an image');
+                return;
+            }
+            
+            const style = document.getElementById('styleSelect').value;
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('style', style);
+            
+            showLoading();
+            hideError();
+            
+            fetch('http://127.0.0.1:5000/convert', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Conversion failed');
+                return response.blob();
+            })
+            .then(blob => {
+                document.getElementById('convertedImage').src = URL.createObjectURL(blob);
+            })
+            .catch(error => {
+                showError(error.message);
+            })
+            .finally(() => {
+                hideLoading();
+            });
+        }
+        
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('originalImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
