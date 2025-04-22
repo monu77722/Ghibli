@@ -1,0 +1,6 @@
+2025-04-21 11:37:34,803 - ERROR - Port 5000 is already in use. Please close any other applications using this port.
+2025-04-21 11:37:35,181 - ERROR - Port 5000 is already in use. Please close any other applications using this port.
+2025-04-21 11:37:35,735 - ERROR - Port 5000 is already in use. Please close any other applications using this port.
+2025-04-21 11:37:35,755 - ERROR - Port 5000 is already in use. Please close any other applications using this port.
+2025-04-21 11:39:33,516 - ERROR - Error starting server: invalid attr name 'connections'
+2025-04-21 11:44:29,160 - ERROR - Error starting server: invalid attr name 'connections'
